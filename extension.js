@@ -11,6 +11,22 @@ const vscode = require("vscode");
  */
 
 function activate(context) {
+  if (process.env.WEBIDE_WORKSPACE_TYPE === "oss") {
+    vscode.workspace
+      .getConfiguration()
+      .update("git.showCommitInput", false, vscode.ConfigurationTarget.Global);
+
+    vscode.workspace.getConfiguration().update(
+      "git.showActionButton",
+      {
+        commit: false,
+        publish: false,
+        sync: false,
+      },
+      vscode.ConfigurationTarget.Global
+    );
+  }
+
   if (process.env.MQ_QUICK_START_IDE_DEMO === "fcWebIde") {
     prepareMqQuickStartConfig();
   } else {
@@ -31,6 +47,10 @@ async function prepareMqQuickStartConfig() {
         "/root/.mvn/settings.xml",
         vscode.ConfigurationTarget.Global
       );
+
+    vscode.workspace
+      .getConfiguration()
+      .update("git.enabled", false, vscode.ConfigurationTarget.Global);
 
     const terminal = vscode.window.createTerminal();
     terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
@@ -53,7 +73,7 @@ async function prepareMqQuickStartConfig() {
         if (process.env[toReplace]) {
           fileContent = fileContent.replace(
             `\${${toReplace}}`,
-            process.env[toReplace]
+            process.env[toReplace].trim()
           );
         }
       }
@@ -82,22 +102,6 @@ function prepareDefaultConfig() {
   vscode.window.showTextDocument(vscode.Uri.file("/code/index.php"));
   vscode.window.showTextDocument(vscode.Uri.file("/code/app.php"));
   vscode.window.showTextDocument(vscode.Uri.file("/code/server.php"));
-
-  if (process.env.WEBIDE_WORKSPACE_TYPE === "oss") {
-    vscode.workspace
-      .getConfiguration()
-      .update("git.showCommitInput", false, vscode.ConfigurationTarget.Global);
-
-    vscode.workspace.getConfiguration().update(
-      "git.showActionButton",
-      {
-        commit: false,
-        publish: false,
-        sync: false,
-      },
-      vscode.ConfigurationTarget.Global
-    );
-  }
 }
 
 module.exports = {

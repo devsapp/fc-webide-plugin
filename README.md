@@ -1,3 +1,3 @@
-# fc-ide 
+# Alibaba Cloud Function Compute Web IDE plugin
 
- npm install -g --unsafe-perm=true --allow-root vsce
+It is only for FC console web ide. 
