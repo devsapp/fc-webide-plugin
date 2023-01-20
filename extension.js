@@ -28,7 +28,7 @@ function activate(context) {
   }
 
   if (process.env.MQ_QUICK_START_IDE_DEMO === "fcWebIde") {
-    prepareMqQuickStartConfig();
+    prepareMqQuickStartConfig(context);
   } else {
     prepareDefaultConfig();
   }
@@ -36,10 +36,40 @@ function activate(context) {
 
 function deactivate() {}
 
-async function prepareMqQuickStartConfig() {
+async function prepareMqQuickStartConfig(context) {
   let codeFilePath = process.env.CODE_FILE_PATH;
 
   if (process.env.LANGUAGE === "java") {
+    context.subscriptions.push(
+      vscode.commands.registerCommand("FcWebIDE.runJava", () => {
+        const editor = vscode.window.activeTextEditor;
+
+        if (editor) {
+          const { document } = editor;
+          let fileContent = document.getText();
+
+          if (
+            fileContent.includes('ACCESS_KEY = "YOUR_ALIYUN_ACCESS_KEY_ID"') ||
+            fileContent.includes('SECRET_KEY = "YOUR_ALIYUN_ACCESS_KEY_SECRET"')
+          ) {
+            vscode.window.showInformationMessage(
+              process.env.I18N === "zh"
+                ? "您需要将阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。如果您还没有密钥，您可以在 RAM 控制台中创建密钥 https://ram.console.aliyun.com/manage/ak"
+                : "Please replace the ACCESS_KEY and SECRET_KEY in the code with your Aliyun AK and SK first."
+            );
+
+            return;
+          }
+        }
+
+        vscode.commands.executeCommand("java.debug.runJavaFile");
+      })
+    );
+
+    vscode.workspace
+      .getConfiguration()
+      .update("FcWebIDE.runJava", true, vscode.ConfigurationTarget.Global);
+
     vscode.workspace
       .getConfiguration()
       .update(
@@ -59,6 +89,12 @@ async function prepareMqQuickStartConfig() {
     await rename("/code/pom", "/code/pom.xml");
 
     codeFilePath = `${codeFilePath}.java`;
+
+    vscode.window.showInformationMessage(
+      process.env.I18N === "zh"
+        ? "请点击右上方的“橙色执行按钮”运行程序。"
+        : "Please click the Run button at the top right corner to run the code."
+    );
   }
 
   vscode.window.showTextDocument(vscode.Uri.file(codeFilePath)).then(() => {

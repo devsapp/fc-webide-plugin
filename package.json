@@ -18,8 +18,44 @@
   ],
   "main": "./extension.js",
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onCommand:FcWebIDE.runJava"
   ],
+  "contributes": {
+    "configuration": [
+      {
+        "title": "FC web IDE configuration",
+        "properties": {
+          "FcWebIDE.runJava": {
+            "title": "Run",
+            "type": "boolean",
+            "default": false,
+            "description": "show icon for 'Run'"
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "FcWebIDE.runJava",
+        "title": "Run",
+        "category": "FcWebIDE",
+        "icon": {
+          "light": "images/play.png",
+          "dark": "images/play.png"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "FcWebIDE.runJava",
+          "when": "resourceExtname == .java && config.FcWebIDE.runJava",
+          "group": "navigation@1"
+        }
+      ]
+    }
+  },
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
