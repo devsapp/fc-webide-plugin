@@ -52,10 +52,13 @@ async function prepareMqQuickStartConfig(context) {
             fileContent.includes('ACCESS_KEY = "YOUR_ALIYUN_ACCESS_KEY_ID"') ||
             fileContent.includes('SECRET_KEY = "YOUR_ALIYUN_ACCESS_KEY_SECRET"')
           ) {
-            vscode.window.showInformationMessage(
+            vscode.window.showWarningMessage(
               process.env.I18N === "zh"
-                ? "您需要将阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。如果您还没有密钥，您可以在 RAM 控制台中创建密钥 https://ram.console.aliyun.com/manage/ak"
-                : "Please replace the ACCESS_KEY and SECRET_KEY in the code with your Aliyun AK and SK first."
+                ? "您需要将具有消息发送权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。如果您还没有密钥，您可以在 RAM 控制台中创建密钥 https://ram.console.aliyun.com/manage/ak"
+                : "Please replace the ACCESS_KEY and SECRET_KEY in the code with your Aliyun AK and SK first.",
+              {
+                modal: true,
+              }
             );
 
             return;
