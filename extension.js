@@ -54,7 +54,7 @@ async function prepareMqQuickStartConfig(context) {
           ) {
             vscode.window.showWarningMessage(
               process.env.I18N === "zh"
-                ? "您需要将具有消息发送权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。如果您还没有密钥，您可以在 RAM 控制台中创建密钥 https://ram.console.aliyun.com/manage/ak"
+                ? "您需要将具有相关权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。如果您还没有密钥，您可以在 RAM 控制台中创建密钥 https://ram.console.aliyun.com/manage/ak"
                 : "Please replace the ACCESS_KEY and SECRET_KEY in the code with your Aliyun AK and SK first.",
               {
                 modal: true,
@@ -95,7 +95,7 @@ async function prepareMqQuickStartConfig(context) {
 
     vscode.window.showInformationMessage(
       process.env.I18N === "zh"
-        ? "请点击右上角的橙色“执行按钮”运行程序。"
+        ? "您需要将具有相关权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。然后点击右上角的橙色“执行按钮”运行程序。"
         : "Please click the Run button at the top right corner to run the code.",
       {
         modal: true,
