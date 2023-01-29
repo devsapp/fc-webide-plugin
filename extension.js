@@ -95,8 +95,11 @@ async function prepareMqQuickStartConfig(context) {
 
     vscode.window.showInformationMessage(
       process.env.I18N === "zh"
-        ? "请点击右上方的“橙色执行按钮”运行程序。"
-        : "Please click the Run button at the top right corner to run the code."
+        ? "请点击右上角的橙色“执行按钮”运行程序。"
+        : "Please click the Run button at the top right corner to run the code.",
+      {
+        modal: true,
+      }
     );
   }
 
