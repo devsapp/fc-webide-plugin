@@ -37,7 +37,8 @@ function activate(context) {
 function deactivate() {}
 
 async function prepareMqQuickStartConfig(context) {
-  let codeFilePath = process.env.CODE_FILE_PATH;
+  const codeFilePaths = process.env.CODE_FILE_PATHS;
+  let defaultFilePath;
 
   if (process.env.LANGUAGE === "java") {
     context.subscriptions.push(
@@ -88,10 +89,16 @@ async function prepareMqQuickStartConfig(context) {
     const terminal = vscode.window.createTerminal();
     terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
 
-    await rename(codeFilePath, `${codeFilePath}.java`);
+    const filesToRename = codeFilePaths.split(",");
+
+    for (let index = 0; index < filesToRename.length; index++) {
+      const filePath = filesToRename[index];
+      await rename(filePath, `${filePath}.java`);
+    }
+
     await rename("/code/pom", "/code/pom.xml");
 
-    codeFilePath = `${codeFilePath}.java`;
+    defaultFilePath = `${filesToRename[0]}.java`;
 
     vscode.window.showInformationMessage(
       process.env.I18N === "zh"
@@ -103,7 +110,7 @@ async function prepareMqQuickStartConfig(context) {
     );
   }
 
-  vscode.window.showTextDocument(vscode.Uri.file(codeFilePath)).then(() => {
+  vscode.window.showTextDocument(vscode.Uri.file(defaultFilePath)).then(() => {
     const editor = vscode.window.activeTextEditor;
 
     if (editor) {
