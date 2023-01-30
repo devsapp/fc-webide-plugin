@@ -3,7 +3,7 @@
   "publisher": "serverless-devs",
   "displayName": "FC WebIDE Plugin",
   "description": "",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "icon": "images/icon.png",
   "engines": {
     "vscode": "^1.70.0"

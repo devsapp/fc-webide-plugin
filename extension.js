@@ -3,7 +3,9 @@
 
 // You can find more demos via https://github.com/microsoft/vscode-extension-samples
 
-const { rename } = require("fs/promises");
+const { rename, access } = require("fs/promises");
+const { constants } = require("fs");
+
 const vscode = require("vscode");
 
 /**
@@ -86,17 +88,22 @@ async function prepareMqQuickStartConfig(context) {
       .getConfiguration()
       .update("git.enabled", false, vscode.ConfigurationTarget.Global);
 
-    const terminal = vscode.window.createTerminal();
-    terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
+    try {
+      await access("/code/pom", constants.R_OK | constants.W_OK);
+      const terminal = vscode.window.createTerminal();
+      terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
+      await rename("/code/pom", "/code/pom.xml");
+    } catch (e) {}
 
     const filesToRename = codeFilePaths.split(",");
 
     for (let index = 0; index < filesToRename.length; index++) {
       const filePath = filesToRename[index];
-      await rename(filePath, `${filePath}.java`);
+      try {
+        await access(filePath, constants.R_OK | constants.W_OK);
+        await rename(filePath, `${filePath}.java`);
+      } catch (e) {}
     }
-
-    await rename("/code/pom", "/code/pom.xml");
 
     defaultFilePath = `${filesToRename[0]}.java`;
 
