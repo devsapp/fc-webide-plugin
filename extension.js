@@ -116,33 +116,38 @@ async function prepareMqQuickStartConfig(context) {
     defaultFilePath = `${filesToRename[0]}.java`;
   }
 
-  vscode.window.showTextDocument(vscode.Uri.file(defaultFilePath)).then(() => {
-    const editor = vscode.window.activeTextEditor;
+  try {
+    await access(defaultFilePath, constants.R_OK);
+    vscode.window
+      .showTextDocument(vscode.Uri.file(defaultFilePath))
+      .then(() => {
+        const editor = vscode.window.activeTextEditor;
 
-    if (editor) {
-      const { document } = editor;
-      let fileContent = document.getText();
-      const toReplaces = process.env.REPLACES.split(",");
-      for (let index = 0; index < toReplaces.length; index++) {
-        const toReplace = toReplaces[index];
-        if (process.env[toReplace]) {
-          fileContent = fileContent.replace(
-            `\${${toReplace}}`,
-            process.env[toReplace].trim()
-          );
+        if (editor) {
+          const { document } = editor;
+          let fileContent = document.getText();
+          const toReplaces = process.env.REPLACES.split(",");
+          for (let index = 0; index < toReplaces.length; index++) {
+            const toReplace = toReplaces[index];
+            if (process.env[toReplace]) {
+              fileContent = fileContent.replace(
+                `\${${toReplace}}`,
+                process.env[toReplace].trim()
+              );
+            }
+          }
+          vscode.window.activeTextEditor.edit((builder) => {
+            builder.replace(
+              new vscode.Range(
+                document.lineAt(0).range.start,
+                document.lineAt(document.lineCount - 1).range.end
+              ),
+              fileContent
+            );
+          });
         }
-      }
-      vscode.window.activeTextEditor.edit((builder) => {
-        builder.replace(
-          new vscode.Range(
-            document.lineAt(0).range.start,
-            document.lineAt(document.lineCount - 1).range.end
-          ),
-          fileContent
-        );
       });
-    }
-  });
+  } catch (e) {}
 }
 
 function prepareDefaultConfig() {
