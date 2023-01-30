@@ -90,6 +90,14 @@ async function prepareMqQuickStartConfig(context) {
 
     try {
       await access("/code/pom", constants.R_OK | constants.W_OK);
+      vscode.window.showInformationMessage(
+        process.env.I18N === "zh"
+          ? "您需要将具有相关权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。然后点击右上角的橙色“执行按钮”运行程序。"
+          : "Please click the Run button at the top right corner to run the code.",
+        {
+          modal: true,
+        }
+      );
       const terminal = vscode.window.createTerminal();
       terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
       await rename("/code/pom", "/code/pom.xml");
@@ -106,15 +114,6 @@ async function prepareMqQuickStartConfig(context) {
     }
 
     defaultFilePath = `${filesToRename[0]}.java`;
-
-    vscode.window.showInformationMessage(
-      process.env.I18N === "zh"
-        ? "您需要将具有相关权限的阿里云密钥信息填写到代码中的 ACCESS_KEY 和 SECRET_KEY 的变量中。然后点击右上角的橙色“执行按钮”运行程序。"
-        : "Please click the Run button at the top right corner to run the code.",
-      {
-        modal: true,
-      }
-    );
   }
 
   vscode.window.showTextDocument(vscode.Uri.file(defaultFilePath)).then(() => {
