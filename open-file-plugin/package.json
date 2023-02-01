@@ -1,0 +1,75 @@
+{
+  "name": "open-file-plugin",
+  "publisher": "serverless-devs",
+  "displayName": "FC WebIDE Open File Plugin",
+  "description": "",
+  "version": "0.0.1",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/devsapp/fc-webide-plugin.git"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:FcWebIDE.runJava"
+  ],
+  "contributes": {
+    "configuration": [
+      {
+        "title": "FC web IDE configuration",
+        "properties": {
+          "FcWebIDE.runJava": {
+            "title": "Run",
+            "type": "boolean",
+            "default": false,
+            "description": "show icon for 'Run'"
+          }
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "FcWebIDE.runJava",
+        "title": "Run",
+        "category": "FcWebIDE",
+        "icon": {
+          "light": "images/play.png",
+          "dark": "images/play.png"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title/run": [
+        {
+          "command": "FcWebIDE.runJava",
+          "when": "resourceExtname == .java && config.FcWebIDE.runJava",
+          "group": "navigation@1"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.70.0",
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "16.x",
+    "eslint": "^8.18.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.7.4",
+    "@vscode/test-electron": "^2.1.5"
+  }
+}
