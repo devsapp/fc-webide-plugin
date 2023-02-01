@@ -22,20 +22,6 @@ async function waiting(seconds) {
 
 async function activate(context) {
   if (process.env.MQ_QUICK_START_IDE_DEMO === "fcWebIde") {
-    vscode.workspace
-      .getConfiguration()
-      .update("git.showCommitInput", false, vscode.ConfigurationTarget.Global);
-
-    vscode.workspace.getConfiguration().update(
-      "git.showActionButton",
-      {
-        commit: false,
-        publish: false,
-        sync: false,
-      },
-      vscode.ConfigurationTarget.Global
-    );
-
     const codeFilePaths = process.env.CODE_FILE_PATHS;
     let defaultFilePath;
 
@@ -79,14 +65,6 @@ async function activate(context) {
 
       vscode.workspace
         .getConfiguration()
-        .update(
-          "java.configuration.maven.userSettings",
-          "/root/.mvn/settings.xml",
-          vscode.ConfigurationTarget.Global
-        );
-
-      vscode.workspace
-        .getConfiguration()
         .update("git.enabled", false, vscode.ConfigurationTarget.Global);
 
       try {
@@ -100,7 +78,7 @@ async function activate(context) {
           }
         );
         const terminal = vscode.window.createTerminal();
-        terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
+        terminal.sendText("mv /code/.local-m2 /root/.m2");
         await waiting(5);
         await rename("/code/pom", "/code/pom.xml");
       } catch (e) {}
