@@ -8,6 +8,14 @@ const { constants } = require("fs");
 
 const vscode = require("vscode");
 
+async function waiting(seconds) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, seconds * 1000);
+  });
+}
+
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -100,6 +108,7 @@ async function prepareMqQuickStartConfig(context) {
       );
       const terminal = vscode.window.createTerminal();
       terminal.sendText("mv /code/.local-m2 /root && mv /code/.mvn /root");
+      await waiting(5);
       await rename("/code/pom", "/code/pom.xml");
     } catch (e) {}
 
