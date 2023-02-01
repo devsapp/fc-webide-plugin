@@ -78,7 +78,7 @@ async function activate(context) {
           }
         );
         const terminal = vscode.window.createTerminal();
-        terminal.sendText("mv /code/.local-m2 /root/.m2");
+        terminal.sendText("mv /code/.m2 /root/.m2");
         await waiting(5);
         await rename("/code/pom", "/code/pom.xml");
       } catch (e) {}
