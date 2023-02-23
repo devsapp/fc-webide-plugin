@@ -3,6 +3,32 @@
 
 // You can find more demos via https://github.com/microsoft/vscode-extension-samples
 const vscode = require("vscode");
+const { access } = require("fs/promises");
+const { constants } = require("fs");
+
+const DEFAULT_FILES_PATH = [
+  "index.js",
+  "app.js",
+  "server.js",
+  "index.py",
+  "app.py",
+  "app.py",
+  "server.py",
+  "index.php",
+  "app.php",
+  "server.php",
+];
+async function openDefaultFile(filePath) {
+  let baseFile =
+    process.env.WEBIDE_FUNCTION_TYPE === "small_account"
+      ? "/mnt/webide_workspace/"
+      : "/code/";
+  try {
+    const path = baseFile + filePath;
+    await access(path, constants.R_OK | constants.W_OK);
+    vscode.window.showTextDocument(vscode.Uri.file(path));
+  } catch (e) {}
+}
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -25,17 +51,13 @@ function activate(context) {
     );
   }
 
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.js"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.js"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.js"));
-
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.py"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.py"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.py"));
-
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.php"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.php"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.php"));
+  if (process.env.DEFAULT_OPEN_FILE_PATH) {
+    openDefaultFile(process.env.DEFAULT_OPEN_FILE_PATH);
+  } else {
+    DEFAULT_FILES_PATH.forEach((filePaht) => {
+      openDefaultFile(filePaht);
+    });
+  }
 }
 
 function deactivate() {}
