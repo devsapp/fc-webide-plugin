@@ -3,6 +3,33 @@
 
 // You can find more demos via https://github.com/microsoft/vscode-extension-samples
 const vscode = require("vscode");
+const { access } = require("fs/promises");
+const { constants } = require("fs");
+
+const DEFAULT_FILES_PATH = [
+  "index.mjs",
+  "index.js",
+  "app.js",
+  "server.js",
+  "index.py",
+  "app.py",
+  "app.py",
+  "server.py",
+  "index.php",
+  "app.php",
+  "server.php",
+];
+async function openDefaultFile(filePath) {
+  let baseFile =
+    process.env.WEBIDE_FUNCTION_TYPE === "small_account"
+      ? "/mnt/webide_workspace/"
+      : "/code/";
+  try {
+    const path = baseFile + filePath;
+    await access(path, constants.R_OK | constants.W_OK);
+    vscode.window.showTextDocument(vscode.Uri.file(path));
+  } catch (e) {}
+}
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -24,24 +51,22 @@ function activate(context) {
       vscode.ConfigurationTarget.Global
     );
 
-    if(process.env.WEBIDE_FUNCTION_TYPE !== "small_account"){
+    if (process.env.WEBIDE_FUNCTION_TYPE !== "small_account") {
       vscode.window.onDidOpenTerminal((terminal) => {
-        terminal.sendText("clear && printf '\\n使用必读：\\n\\n1. 在此 WebIDE 中，无法直接测试“层”、“OSS”、“NAS” 的挂载，也无法在 WebIDE 中测试“访问 VPC” 中的资源。您需要在“实例列表”中“登录实例”来测试真实环境。\\n2. 安装 Python 依赖时必须添加 -t . 才能正确将依赖安装到中。例如：pip install flask -t .\\n\\n'");
+        terminal.sendText(
+          "clear && printf '\\n使用必读：\\n\\n1. 在此 WebIDE 中，无法直接测试“层”、“OSS”、“NAS” 的挂载，也无法在 WebIDE 中测试“访问 VPC” 中的资源。您需要在“实例列表”中“登录实例”来测试真实环境。\\n2. 安装 Python 依赖时必须添加 -t . 才能正确将依赖安装到中。例如：pip install flask -t .\\n\\n'"
+        );
       });
     }
   }
 
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.js"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.js"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.js"));
-
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.py"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.py"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.py"));
-
-  vscode.window.showTextDocument(vscode.Uri.file("/code/index.php"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/app.php"));
-  vscode.window.showTextDocument(vscode.Uri.file("/code/server.php"));
+  if (process.env.DEFAULT_OPEN_FILE_PATH) {
+    openDefaultFile(process.env.DEFAULT_OPEN_FILE_PATH);
+  } else {
+    DEFAULT_FILES_PATH.forEach((filePaht) => {
+      openDefaultFile(filePaht);
+    });
+  }
 }
 
 function deactivate() {}

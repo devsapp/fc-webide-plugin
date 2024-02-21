@@ -7,6 +7,7 @@ const { access } = require("fs/promises");
 const { constants } = require("fs");
 
 const DEFAULT_FILES_PATH = [
+  "index.mjs",
   "index.js",
   "app.js",
   "server.js",
@@ -50,9 +51,11 @@ function activate(context) {
       vscode.ConfigurationTarget.Global
     );
 
-    if(process.env.WEBIDE_FUNCTION_TYPE !== "small_account"){
+    if (process.env.WEBIDE_FUNCTION_TYPE !== "small_account") {
       vscode.window.onDidOpenTerminal((terminal) => {
-        terminal.sendText("clear && printf '\\n使用必读：\\n\\n1. 在此 WebIDE 中，无法直接测试“层”、“OSS”、“NAS” 的挂载，也无法在 WebIDE 中测试“访问 VPC” 中的资源。您需要在“实例列表”中“登录实例”来测试真实环境。\\n2. 安装 Python 依赖时必须添加 -t . 才能正确将依赖安装到中。例如：pip install flask -t .\\n\\n'");
+        terminal.sendText(
+          "clear && printf '\\n使用必读：\\n\\n1. 在此 WebIDE 中，无法直接测试“层”、“OSS”、“NAS” 的挂载，也无法在 WebIDE 中测试“访问 VPC” 中的资源。您需要在“实例列表”中“登录实例”来测试真实环境。\\n2. 安装 Python 依赖时必须添加 -t . 才能正确将依赖安装到中。例如：pip install flask -t .\\n\\n'"
+        );
       });
     }
   }
